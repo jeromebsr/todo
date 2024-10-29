@@ -59,7 +59,8 @@ const CreateTask = () => {
       await addDoc(collection(db, "tasks"), {
         ...task,
         creation_date: currentDate,
-        updated_at: currentDate,
+        updated_at: null,
+        status: "En attente"
       });
 
       // Message de succès
@@ -86,12 +87,6 @@ const CreateTask = () => {
     }
   };
 
-  const priority = [
-    { value: "1", title: "🟢 Faible" },
-    { value: "2", title: "🟠 Moyenne" },
-    { value: "3", title: "🔴 Haute", },
-  ];
-
   return (
     <Box p={5} maxWidth="800px" mx="auto">
       <Heading mb={4}>Créer une Nouvelle Tâche</Heading>
@@ -107,36 +102,29 @@ const CreateTask = () => {
                 placeholder="Nom de la tâche"
               />
             </Field>
-            <Field label="Catégorie" invalid>
+            <Field label="Catégorie">
               <NativeSelectRoot>
                 <NativeSelectField
                   name="category"
                   items={["Travail", "Course", "Ménage"]}
+                  value={task.category}
+                  onChange={handleChange}
                 />
               </NativeSelectRoot>
             </Field>
             <Field>
-              <RadioCardRoot
-                orientation="horizontal"
-                align="center"
-                justify="center"
-                maxW="lg"
-                defaultValue="1"
-              >
-                <RadioCardLabel>Priorité</RadioCardLabel>
-                <HStack align="stretch">
-                  {priority.map((item) => (
-                    <RadioCardItem
-                      label={item.title}
-                      indicator={false}
-                      key={item.value}
-                      value={item.value}
-                    />
-                  ))}
-                </HStack>
-              </RadioCardRoot>
+            <Field label="Priorité">
+              <NativeSelectRoot>
+                <NativeSelectField
+                  name="priority"
+                  items={["Faible", "Moyenne", "Haute"]}
+                  value={task.priority}
+                  onChange={handleChange}
+                />
+              </NativeSelectRoot>
             </Field>
-            <Field label="Description" invalid>
+            </Field>
+            <Field label="Description">
               <Textarea
                 name="description"
                 placeholder="Décrire la tâche en détails"
@@ -144,7 +132,7 @@ const CreateTask = () => {
                 onChange={handleChange}
               />
             </Field>
-            <Field>
+            <Field label="Deadline">
             <Input
               type="date"
               name="deadline"  
@@ -153,11 +141,11 @@ const CreateTask = () => {
             />
             </Field>
           </Fieldset.Content>
-          <Fieldset.ErrorText>
+          {/* <Fieldset.ErrorText>
             Some fields are invalid. Please check them.
-          </Fieldset.ErrorText>
+          </Fieldset.ErrorText> */}
         </Fieldset.Root>
-        <Button type="submit" colorScheme="teal">
+        <Button type="submit" colorScheme="teal" mt={5}>
           Ajouter Tâche
         </Button>
       </form>
