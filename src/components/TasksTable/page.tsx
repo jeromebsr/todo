@@ -58,7 +58,9 @@ const TasksTable = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {tasks.map((task) => (
+            {tasks
+            .filter((task) => task.status !== "Terminée")
+            .map((task) => (
               <Table.Row key={task.id}>
                 <Table.Cell>{task.name}</Table.Cell>
                 <Table.Cell>{task.category}</Table.Cell>

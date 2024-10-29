@@ -63,10 +63,10 @@ const EditTask = ({ params }: { params: Promise<{ id: string }> }) => {
     if (
       !task?.name ||
       !task.status ||
-      task.priority === "Sélectionnez..." ||
+      !task.priority  ||
       !task.deadline ||
       !task.description ||
-      task.category === "Sélectionnez..."
+      !task.category
     ) {
       setError("Tous les champs doivent être remplis !");
       return; // Ne pas soumettre si des champs sont vides
@@ -115,7 +115,7 @@ const EditTask = ({ params }: { params: Promise<{ id: string }> }) => {
               <NativeSelectRoot>
                 <NativeSelectField
                   name="category"
-                  items={["Sélectionnez...", "Travail", "Course", "Ménage"]}
+                  items={["Travail", "Course", "Ménage"]}
                   value={task.category}
                   onChange={handleChange}
                 />
@@ -125,7 +125,7 @@ const EditTask = ({ params }: { params: Promise<{ id: string }> }) => {
               <NativeSelectRoot>
                 <NativeSelectField
                   name="priority"
-                  items={["Sélectionnez...", "Faible", "Moyenne", "Haute"]}
+                  items={["Faible", "Moyenne", "Haute"]}
                   value={task.priority}
                   onChange={handleChange}
                 />
@@ -146,6 +146,16 @@ const EditTask = ({ params }: { params: Promise<{ id: string }> }) => {
                 value={task.deadline}
                 onChange={handleChange}
               />
+            </Field>
+            <Field label="Status">
+              <NativeSelectRoot>
+                <NativeSelectField
+                  name="status"
+                  items={["En attente", "En cours", "Terminée"]}
+                  value={task.status}
+                  onChange={handleChange}
+                />
+              </NativeSelectRoot>
             </Field>
           </Fieldset.Content>
           {error && (
