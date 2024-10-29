@@ -11,12 +11,7 @@ import {
 import { Box } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
-import { HStack } from "@chakra-ui/react";
-import {
-  RadioCardItem,
-  RadioCardLabel,
-  RadioCardRoot,
-} from "@/components/ui/radio-card";
+import { getAuth } from "firebase/auth";
 
 interface Task {
   name: string;
@@ -55,9 +50,13 @@ const CreateTask = () => {
     const currentDate = new Date().toLocaleDateString();
 
     try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
       // Ajouter la tâche
       await addDoc(collection(db, "tasks"), {
         ...task,
+        userUid: user?.uid, 
         creation_date: currentDate,
         updated_at: null,
         status: "En attente"
