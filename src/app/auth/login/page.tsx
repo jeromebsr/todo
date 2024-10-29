@@ -1,12 +1,12 @@
 "use client";
-import { Box, Button, Heading, HStack, Input } from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, Input, Text, Link } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { FormEvent, useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "@/firebase";
 import { useRouter } from "next/navigation";
 
-const Auth = () => {
+const Login = () => {
   const auth = getAuth(app);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -53,9 +53,10 @@ const Auth = () => {
         <Button type="submit" colorScheme="teal" mt={5}>
           Me connecter
         </Button>
+        <Text>Pas de compte ? <Link href="/auth/register">Créer mon compte</Link></Text>
       </form>
     </Box>
   );
 };
 
-export default Auth;
+export default Login;

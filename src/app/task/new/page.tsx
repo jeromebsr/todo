@@ -1,7 +1,7 @@
-'use client'
-import { useState, FormEvent } from "react";
+"use client";
+import { useState, FormEvent, useEffect } from "react";
 import { db } from "@/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { Fieldset, Heading, Input, Textarea } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import {
@@ -12,7 +12,7 @@ import { Box } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
+import Select from "react-select";
 interface Task {
   name: string;
   priority: string;
@@ -21,6 +21,11 @@ interface Task {
   category: string;
   creation_date: string;
   updated_at: string;
+  assignedUsers: string;
+}
+interface User {
+  uid: string;
+  firstName: string;
 }
 
 const CreateTask = () => {
@@ -33,9 +38,23 @@ const CreateTask = () => {
     category: "",
     creation_date: "",
     updated_at: "",
+    assignedUsers: "",
   });
-
+  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string>("");
+
+  // Récupère les users en DB pour les attributions de tâche
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const usersList = usersSnapshot.docs.map((doc) => ({
+        uid: doc.id,
+        firstName: doc.data().firstName,
+      }));
+      setUsers(usersList);
+    };
+    fetchUsers();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -58,27 +77,27 @@ const CreateTask = () => {
       task.category === "Sélectionnez..."
     ) {
       setError("Tous les champs doivent être remplis !");
-      console.log(task)
+      console.log(task);
       return; // Ne pas soumettre si des champs sont vides
     }
 
     try {
       const auth = getAuth();
       const user = auth.currentUser;
-      
+
       // Ajouter la tâche
       await addDoc(collection(db, "tasks"), {
         ...task,
-        userUid: user?.uid, 
-        username: user?.displayName,
+        userUid: user?.uid,
+        displayName: user?.displayName,
         creation_date: currentDate,
         updated_at: null,
-        status: "En attente"
+        status: "En attente",
       });
 
-      console.log("Tache ajoutée!")
-  
-      router.push('/')
+      console.log("Tache ajoutée!");
+
+      router.push("/");
 
       // Réinitialiser l'état de la tâche
       setTask({
@@ -89,10 +108,23 @@ const CreateTask = () => {
         category: "",
         creation_date: "",
         updated_at: "",
+        assignedUsers: "",
       });
     } catch (error) {
       console.error("Erreur lors de l’ajout de la tâche :", error);
     }
+  };
+
+  const userOptions = users.map((user) => ({
+    value: user.uid,
+    label: user.firstName,
+  }));
+  
+  const handleUserChange = (selectedOptions) => {
+    const selectedUserIds = selectedOptions
+      ? selectedOptions.map((option) => option.value).join(",")
+      : "";
+    setTask((prevTask) => ({ ...prevTask, assignedUsers: selectedUserIds }));
   };
 
   return (
@@ -121,16 +153,16 @@ const CreateTask = () => {
               </NativeSelectRoot>
             </Field>
             <Field>
-            <Field label="Priorité">
-              <NativeSelectRoot>
-                <NativeSelectField
-                  name="priority"
-                  items={["Sélectionnez...", "Faible", "Moyenne", "Haute"]}
-                  value={task.priority}
-                  onChange={handleChange}
-                />
-              </NativeSelectRoot>
-            </Field>
+              <Field label="Priorité">
+                <NativeSelectRoot>
+                  <NativeSelectField
+                    name="priority"
+                    items={["Sélectionnez...", "Faible", "Moyenne", "Haute"]}
+                    value={task.priority}
+                    onChange={handleChange}
+                  />
+                </NativeSelectRoot>
+              </Field>
             </Field>
             <Field label="Description">
               <Textarea
@@ -141,26 +173,35 @@ const CreateTask = () => {
               />
             </Field>
             <Field label="Deadline">
-            <Input
-              type="date"
-              name="deadline"  
-              value={task.deadline}
-              onChange={handleChange}   
-            />
+              <Input
+                type="date"
+                name="deadline"
+                value={task.deadline}
+                onChange={handleChange}
+              />
+            </Field>
+            <Field label="Attribuer à">
+              <Select
+                options={userOptions}
+                isMulti
+                onChange={handleUserChange}
+                placeholder="Sélectionnez des utilisateurs..."
+              />
             </Field>
           </Fieldset.Content>
-          {error && (
-            <Fieldset.ErrorText>
-              {error}
-            </Fieldset.ErrorText>
-          )}
+          {error && <Fieldset.ErrorText>{error}</Fieldset.ErrorText>}
         </Fieldset.Root>
         <Button type="submit" mt={5}>
           Ajouter Tâche
         </Button>
       </form>
-      <Button type="submit" colorPalette="red" mt={2} onClick={() => (router.push('/'))}>
-          Annuler
+      <Button
+        type="submit"
+        colorPalette="red"
+        mt={2}
+        onClick={() => router.push("/")}
+      >
+        Annuler
       </Button>
     </Box>
   );

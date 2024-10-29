@@ -3,14 +3,15 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { Button, Input, Box, Heading } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 
 const UpdateUserProfile = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const router = useRouter();
-
+  const firestore = getFirestore(); 
+  
   const handleUpdateProfile = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -25,7 +26,15 @@ const UpdateUserProfile = () => {
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`, // Met à jour le nom d'affichage
       });
-      setSuccess("Profil mis à jour avec succès !");
+
+      // Mise à jour du profil dans la base de données Firestore
+      await setDoc(doc(firestore, "users", user.uid), {
+        firstName,
+        lastName,
+      }, { merge: true });
+
+      console.log("Profil mis à jour avec succès !");
+      router.push('/')
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil :", error);
       setError("Une erreur s'est produite lors de la mise à jour du profil.");
@@ -51,10 +60,9 @@ const UpdateUserProfile = () => {
         Mettre à Jour le Profil
       </Button>
       <Button type="submit" colorPalette="red" ml={3} onClick={() => (router.push('/'))}>
-          Annuler
+          Retour
       </Button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
     </Box>
   );
 };

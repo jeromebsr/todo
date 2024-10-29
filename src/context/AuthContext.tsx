@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User, getAuth } from "firebase/auth";
 import { app } from "@/firebase";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Spinner, VStack, Text } from "@chakra-ui/react";
 
 interface AuthContextProps {
@@ -18,6 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname(); // Obtenir le chemin actuel
   const auth = getAuth(app);
 
   useEffect(() => {
@@ -26,14 +27,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(firebaseUser);
       setLoading(false);
 
-      if (!firebaseUser) {
-        router.push("/auth"); // Redirige les utilisateurs non connectés vers /login
+      // Rediriger vers /auth/login uniquement si l'utilisateur n'est pas connecté et que le chemin n'est pas /auth/register
+      if (!firebaseUser && pathname !== "/auth/register") {
+        router.push("/auth/login");
       }
     });
 
     // Nettoyage de l'abonnement lors de la déconnexion
     return () => unsubscribe();
-  }, [auth, router]);
+  }, [auth, router, pathname]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

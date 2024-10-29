@@ -62,7 +62,7 @@ const TaskDetail = ({ params }: { params: Promise<{ id: string }> }) => {
       <Text><strong>Statut :</strong> {task.status}</Text>
       {task.description && <Text><strong>Description :</strong> {task.description}</Text>} 
       <Text><strong>Créée le :</strong> {task.creation_date}</Text>
-      <Text><strong>Par</strong> : {task.username}</Text>
+      <Text><strong>Par</strong> : {task.displayName}</Text>
       <Button colorPalette="teal" variant="solid" size="sm" mt={3}>
         <Link href={`/task/edit/${id}`}>Modifier</Link>
       </Button>

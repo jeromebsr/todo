@@ -14,7 +14,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push("/auth"); // Redirection vers la page de login après déconnexion
+      router.push("/auth/login"); // Redirection vers la page de login après déconnexion
     } catch (error) {
       console.error("Erreur de déconnexion :", error);
     }
