@@ -4,6 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Box, Heading, Text, Spinner, Button, Link } from "@chakra-ui/react";
 import { use } from "react"; // Importer le hook use
+import { useRouter } from "next/navigation";
 
 interface Task {
   name: string;
@@ -16,6 +17,7 @@ interface Task {
 }
 
 const TaskDetail = ({ params }: { params: Promise<{ id: string }> }) => {
+  const router = useRouter();
   const { id } = use(params); // Utilisation de React.use() pour déballer les params
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,6 +65,9 @@ const TaskDetail = ({ params }: { params: Promise<{ id: string }> }) => {
       <Text><strong>Par</strong> : {task.username}</Text>
       <Button colorPalette="teal" variant="solid" size="sm" mt={3}>
         <Link href={`/task/edit/${id}`}>Modifier</Link>
+      </Button>
+      <Button type="submit" colorPalette="red" size='sm' ml={2} mt={3} onClick={() => (router.push('/'))}>
+          Annuler
       </Button>
     </Box>
   );

@@ -2,12 +2,14 @@
 import { getAuth, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { Button, Input, Box, Heading } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 const UpdateUserProfile = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   const handleUpdateProfile = async () => {
     const auth = getAuth();
@@ -47,6 +49,9 @@ const UpdateUserProfile = () => {
       />
       <Button colorScheme="teal" onClick={handleUpdateProfile}>
         Mettre à Jour le Profil
+      </Button>
+      <Button type="submit" colorPalette="red" ml={3} onClick={() => (router.push('/'))}>
+          Annuler
       </Button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}

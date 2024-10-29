@@ -155,10 +155,13 @@ const CreateTask = () => {
             </Fieldset.ErrorText>
           )}
         </Fieldset.Root>
-        <Button type="submit" colorScheme="teal" mt={5}>
+        <Button type="submit" mt={5}>
           Ajouter Tâche
         </Button>
       </form>
+      <Button type="submit" colorPalette="red" mt={2} onClick={() => (router.push('/'))}>
+          Annuler
+      </Button>
     </Box>
   );
 };

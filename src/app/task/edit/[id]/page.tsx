@@ -168,6 +168,9 @@ const EditTask = ({ params }: { params: Promise<{ id: string }> }) => {
           Mettre à Jour Tâche
         </Button>
       </form>
+      <Button type="submit" colorPalette="red" mt={3} onClick={() => (router.push('/'))}>
+          Annuler
+      </Button>
     </Box>
   );
 };
