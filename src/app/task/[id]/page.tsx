@@ -1,32 +1,67 @@
-import Link from "next/link";
+'use client'
+import { db } from "@/firebase"; // Assurez-vous d'importer votre instance de Firestore
+import { doc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Box, Heading, Text, Spinner, Button, Link } from "@chakra-ui/react";
 
-const TaskList = () => {
-  const task = [
-    {
-      id: "1",
-      name: "Tâche 1",
-      status: "En attente",
-      priority: "Haute",
-      deadline: "01/11/2025",
-      creation_date: "28/10/2024",
-      updated_at: "28/10/2024",
-    },
-  ];
+interface Task {
+  name: string;
+  category: string;
+  priority: string;
+  deadline: string;
+  status: string;
+  description?: string; // Ajoutez d'autres champs selon votre structure de données
+}
+
+const TaskDetail = ({ params }: { params: { id: string } }) => {
+  const { id } = params; // Récupération de l'ID de la tâche depuis les props
+  const [task, setTask] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTask = async () => {
+      if (id) {
+        try {
+          const taskDoc = doc(db, "tasks", id);
+          const taskSnapshot = await getDoc(taskDoc);
+          if (taskSnapshot.exists()) {
+            setTask(taskSnapshot.data() as Task); // Récupération des données de la tâche
+          } else {
+            console.error("La tâche n'existe pas.");
+          }
+        } catch (error) {
+          console.error("Erreur lors de la récupération de la tâche :", error);
+        } finally {
+          setLoading(false); // Fin du chargement
+        }
+      }
+    };
+
+    fetchTask();
+  }, [id]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (!task) {
+    return <Text>Aucune tâche trouvée.</Text>;
+  }
 
   return (
-    <div>
-      <ul>
-        {task.map((task) => (
-          <>
-            <h1>Détails de la tâche "{task.name}"</h1>
-            <li key={task.id}>
-              <p>{task.name}</p>
-            </li>
-          </>
-        ))}
-      </ul>
-    </div>
+    <Box p={5} maxWidth="600px" mx="auto">
+      <Heading mb={4}>Détails de la tâche</Heading>
+      <Text><strong>Nom :</strong> {task.name}</Text>
+      <Text><strong>Catégorie :</strong> {task.category}</Text>
+      <Text><strong>Priorité :</strong> {task.priority}</Text>
+      <Text><strong>Date Limite :</strong> {task.deadline}</Text>
+      <Text><strong>Statut :</strong> {task.status}</Text>
+      {task.description && <Text><strong>Description :</strong> {task.description}</Text>}
+      <Button colorPalette="teal" variant="solid" size="sm" mt={3}>
+      <Link href={`/task/edit/${id}`}>Modifier</Link>
+      </Button>
+    </Box>
   );
 };
 
-export default TaskList;
+export default TaskDetail;

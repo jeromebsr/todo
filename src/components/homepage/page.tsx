@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { Table } from "@chakra-ui/react";
+import TasksTable from "../TasksTable/page";
 
 const items = [
   { id: 1, name: "Laptop", category: "Electronics", price: 999.99 },
@@ -22,28 +23,7 @@ const Homepage = () => {
         <h1>Bienvenue, {user.email}</h1>
       </div>
 
-      <Table.ScrollArea borderWidth="1px" maxW="xl">
-        <Table.Root size="sm" variant="outline">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader minW="400px">Product</Table.ColumnHeader>
-              <Table.ColumnHeader minW="400px">Category</Table.ColumnHeader>
-              <Table.ColumnHeader minW="200px" textAlign="end">
-                Price
-              </Table.ColumnHeader>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {items.map((item) => (
-              <Table.Row key={item.id}>
-                <Table.Cell>{item.name}</Table.Cell>
-                <Table.Cell>{item.category}</Table.Cell>
-                <Table.Cell textAlign="end">{item.price}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
-      </Table.ScrollArea>
+      <TasksTable />
     </>
   );
 };
