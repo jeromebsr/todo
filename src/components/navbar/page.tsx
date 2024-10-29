@@ -1,5 +1,5 @@
-'use client'
-import { Button, Link } from "@chakra-ui/react";
+"use client";
+import { Box, Button, Heading, Link } from "@chakra-ui/react";
 import React from "react";
 import { getAuth, signOut } from "firebase/auth";
 import { app } from "@/firebase";
@@ -23,14 +23,25 @@ const Navbar = () => {
   if (!user) return null;
 
   return (
-    <>
+    <Box p={5} maxWidth="800px" mx="auto">
+      <Heading mb={4}>Menu rapide</Heading>
       <Button colorPalette="teal" variant="solid" size="xl">
         <Link href="/task/new">Créer une tâche</Link>
       </Button>
-      <Button colorPalette="red" variant="solid" size="xl" onClick={handleLogout}>
+      {" "}
+      <Button colorPalette="teal" variant="solid" size="xl">
+        <Link href="/account/edit">Mon Profil</Link>
+      </Button>
+      {" "}
+      <Button
+        colorPalette="red"
+        variant="solid"
+        size="xl"
+        onClick={handleLogout}
+      >
         <Link href="/task/new">Déconnexion</Link>
       </Button>
-    </>
+    </Box>
   );
 };
 

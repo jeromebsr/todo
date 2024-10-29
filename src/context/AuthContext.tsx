@@ -1,9 +1,7 @@
-// src/context/AuthContext.tsx
-"use client";
-
+'use client'
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User, getAuth } from "firebase/auth";
-import { app } from "@/firebase"; 
+import { app } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { Spinner, VStack, Text } from "@chakra-ui/react";
 
@@ -14,7 +12,9 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -37,10 +37,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
-      {loading ? <VStack colorPalette="teal">
-      <Spinner color="colorPalette.600" />
-      <Text color="colorPalette.600">Chargement...</Text>
-    </VStack> : children}
+      {loading ? (
+        <VStack colorPalette="teal">
+          <Spinner color="colorPalette.600" />
+          <Text color="colorPalette.600">Chargement...</Text>
+        </VStack>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

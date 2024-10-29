@@ -85,7 +85,6 @@ const CreateTask = () => {
       // Réinitialiser l'état de la tâche
       setTask({
         name: "",
-        status: "",
         priority: "",
         deadline: "",
         description: "",
