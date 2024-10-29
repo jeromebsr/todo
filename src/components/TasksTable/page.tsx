@@ -43,7 +43,7 @@ const TasksTable = () => {
   }, []);
 
   return (
-    <Table.ScrollArea borderWidth="1px" maxW="xl">
+    <Table.ScrollArea borderWidth="1px" maxW="fit-content">
       <Table.Root size="sm" variant="outline">
         <Table.Header>
           <Table.Row>

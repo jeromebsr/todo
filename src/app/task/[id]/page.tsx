@@ -3,6 +3,7 @@ import { db } from "@/firebase"; // Assurez-vous d'importer votre instance de Fi
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Box, Heading, Text, Spinner, Button, Link } from "@chakra-ui/react";
+import { use } from "react"; // Importer le hook use
 
 interface Task {
   name: string;
@@ -10,11 +11,12 @@ interface Task {
   priority: string;
   deadline: string;
   status: string;
-  description?: string; // Ajoutez d'autres champs selon votre structure de données
+  description?: string; 
+  creation_date: string;
 }
 
-const TaskDetail = ({ params }: { params: { id: string } }) => {
-  const { id } = params; // Récupération de l'ID de la tâche depuis les props
+const TaskDetail = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params); // Utilisation de React.use() pour déballer les params
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -56,9 +58,10 @@ const TaskDetail = ({ params }: { params: { id: string } }) => {
       <Text><strong>Priorité :</strong> {task.priority}</Text>
       <Text><strong>Date Limite :</strong> {task.deadline}</Text>
       <Text><strong>Statut :</strong> {task.status}</Text>
-      {task.description && <Text><strong>Description :</strong> {task.description}</Text>}
+      {task.description && <Text><strong>Description :</strong> {task.description}</Text>} 
+      <Text><strong>Créée le :</strong> {task.creation_date}</Text>
       <Button colorPalette="teal" variant="solid" size="sm" mt={3}>
-      <Link href={`/task/edit/${id}`}>Modifier</Link>
+        <Link href={`/task/edit/${id}`}>Modifier</Link>
       </Button>
     </Box>
   );

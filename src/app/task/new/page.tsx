@@ -15,7 +15,6 @@ import { getAuth } from "firebase/auth";
 
 interface Task {
   name: string;
-  status: string;
   priority: string;
   deadline: string;
   description: string;
@@ -27,7 +26,6 @@ interface Task {
 const CreateTask = () => {
   const [task, setTask] = useState<Task>({
     name: "",
-    status: "",
     priority: "",
     deadline: "",
     description: "",
@@ -35,6 +33,8 @@ const CreateTask = () => {
     creation_date: "",
     updated_at: "",
   });
+
+  const [error, setError] = useState<string>("");
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -49,6 +49,18 @@ const CreateTask = () => {
     e.preventDefault();
     const currentDate = new Date().toLocaleDateString();
 
+    if (
+      !task.name ||
+      task.priority === "Sélectionnez..." ||
+      !task.deadline ||
+      !task.description ||
+      task.category === "Sélectionnez..."
+    ) {
+      setError("Tous les champs doivent être remplis !");
+      console.log(task)
+      return; // Ne pas soumettre si des champs sont vides
+    }
+
     try {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -62,6 +74,7 @@ const CreateTask = () => {
         status: "En attente"
       });
 
+      console.log("Tache ajoutée!")
       // Message de succès
       toaster.create({
         title: "Tâche ajoutée",
@@ -105,7 +118,7 @@ const CreateTask = () => {
               <NativeSelectRoot>
                 <NativeSelectField
                   name="category"
-                  items={["Travail", "Course", "Ménage"]}
+                  items={["Sélectionnez...", "Travail", "Course", "Ménage"]}
                   value={task.category}
                   onChange={handleChange}
                 />
@@ -116,7 +129,7 @@ const CreateTask = () => {
               <NativeSelectRoot>
                 <NativeSelectField
                   name="priority"
-                  items={["Faible", "Moyenne", "Haute"]}
+                  items={["Sélectionnez...", "Faible", "Moyenne", "Haute"]}
                   value={task.priority}
                   onChange={handleChange}
                 />
@@ -140,9 +153,11 @@ const CreateTask = () => {
             />
             </Field>
           </Fieldset.Content>
-          {/* <Fieldset.ErrorText>
-            Some fields are invalid. Please check them.
-          </Fieldset.ErrorText> */}
+          {error && (
+            <Fieldset.ErrorText>
+              {error}
+            </Fieldset.ErrorText>
+          )}
         </Fieldset.Root>
         <Button type="submit" colorScheme="teal" mt={5}>
           Ajouter Tâche
