@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import { useState, FormEvent } from "react";
 import { db } from "@/firebase";
 import { collection, addDoc } from "firebase/firestore";
@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/native-select";
 import { Box } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { toaster } from "@/components/ui/toaster";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 interface Task {
   name: string;
@@ -24,6 +24,7 @@ interface Task {
 }
 
 const CreateTask = () => {
+  const router = useRouter();
   const [task, setTask] = useState<Task>({
     name: "",
     priority: "",
@@ -69,18 +70,15 @@ const CreateTask = () => {
       await addDoc(collection(db, "tasks"), {
         ...task,
         userUid: user?.uid, 
+        username: user?.displayName,
         creation_date: currentDate,
         updated_at: null,
         status: "En attente"
       });
 
       console.log("Tache ajoutée!")
-      // Message de succès
-      toaster.create({
-        title: "Tâche ajoutée",
-        description: "C'est fait, la tâche a bien été ajoutée à la liste !",
-        type: "success",
-      });
+  
+      router.push('/')
 
       // Réinitialiser l'état de la tâche
       setTask({
@@ -94,7 +92,6 @@ const CreateTask = () => {
       });
     } catch (error) {
       console.error("Erreur lors de l’ajout de la tâche :", error);
-      //toast error
     }
   };
 

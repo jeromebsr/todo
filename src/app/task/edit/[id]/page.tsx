@@ -160,7 +160,7 @@ const EditTask = ({ params }: { params: Promise<{ id: string }> }) => {
           </Fieldset.Content>
           {error && (
             <Fieldset.ErrorText>
-              {error} {/* Afficher le message d'erreur ici */}
+              {error}
             </Fieldset.ErrorText>
           )}
         </Fieldset.Root>
