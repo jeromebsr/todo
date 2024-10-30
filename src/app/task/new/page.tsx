@@ -67,7 +67,6 @@ const CreateTask = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const currentDate = new Date().toLocaleDateString();
 
     if (
       !task.name ||
@@ -84,6 +83,7 @@ const CreateTask = () => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
+      const currentDate = new Date().toLocaleDateString();
 
       // Ajouter la tâche
       await addDoc(collection(db, "tasks"), {
@@ -97,8 +97,6 @@ const CreateTask = () => {
 
       console.log("Tache ajoutée!");
 
-      router.push("/");
-
       // Réinitialiser l'état de la tâche
       setTask({
         name: "",
@@ -110,6 +108,8 @@ const CreateTask = () => {
         updated_at: "",
         assignedUsers: "",
       });
+
+      router.push("/"); // Redirection une fois l'ajout terminé
     } catch (error) {
       console.error("Erreur lors de l’ajout de la tâche :", error);
     }
@@ -120,9 +120,9 @@ const CreateTask = () => {
     label: user.firstName,
   }));
   
-  const handleUserChange = (selectedOptions) => {
+  const handleUserChange = (selectedOptions: any) => {
     const selectedUserIds = selectedOptions
-      ? selectedOptions.map((option) => option.value).join(",")
+      ? selectedOptions.map((option: any) => option.value).join(",")
       : "";
     setTask((prevTask) => ({ ...prevTask, assignedUsers: selectedUserIds }));
   };
