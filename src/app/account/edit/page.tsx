@@ -22,7 +22,7 @@ const UpdateUserProfile = () => {
     }
 
     try {
-      // Mise à jour du profil de l'utilisateur
+      // Mise à jour du profil de l'utilisateur (côté auth firebase)
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`, // Met à jour le nom d'affichage
       });

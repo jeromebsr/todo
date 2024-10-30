@@ -28,6 +28,10 @@ interface User {
   firstName: string;
 }
 
+interface Categorie {
+  name: string;
+}
+
 const CreateTask = () => {
   const router = useRouter();
   const [task, setTask] = useState<Task>({
@@ -40,6 +44,7 @@ const CreateTask = () => {
     updated_at: "",
     assignedUsers: "",
   });
+  const [categories, setCategories] = useState<Categorie[]>([])
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string>("");
 
@@ -55,6 +60,18 @@ const CreateTask = () => {
     };
     fetchUsers();
   }, []);
+
+  // Récupère les catégories en DB
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const catSnapshot = await getDocs(collection(db, "categories"));
+      const catList = catSnapshot.docs.map((doc) => ({
+        name: doc.data().name
+      }));
+      setCategories(catList);
+    };
+    fetchCategories();
+  }, [])
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -146,7 +163,7 @@ const CreateTask = () => {
               <NativeSelectRoot>
                 <NativeSelectField
                   name="category"
-                  items={["Sélectionnez...", "Travail", "Course", "Ménage"]}
+                  items={categories.map((cat) => (cat.name))}
                   value={task.category}
                   onChange={handleChange}
                 />

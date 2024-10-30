@@ -8,7 +8,6 @@ import { Field } from "@/components/ui/field";
 import { NativeSelectField, NativeSelectRoot } from "@/components/ui/native-select";
 import { Box } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
-import { toaster } from "@/components/ui/toaster";
 import Select from "react-select";
 
 interface Task {
@@ -109,12 +108,7 @@ const EditTask = () => {
       const updatedAt = new Date().toLocaleDateString();
       await updateDoc(taskRef, { ...task, updated_at: updatedAt });
 
-      toaster.create({
-        title: "Tâche mise à jour",
-        description: "C'est fait, la tâche a bien été mise à jour !",
-        type: "success",
-      });
-
+      console.log("Tache mise à jour");
       router.push(`/task/${id}`);
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la tâche :", error);
