@@ -14,6 +14,7 @@ import { getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
 import Creatable from "react-select/creatable";
+import { sendEmail } from "@/components/emailjs/page";
 interface Task {
   name: string;
   priority: string;
@@ -121,6 +122,12 @@ const CreateTask = () => {
         status: "En attente",
       });
 
+      sendEmail(
+        user?.displayName,
+        task.name,
+        task.description,
+        task.assignedUsers.split(",")
+      );
       console.log("Tache ajoutée!");
 
       // Réinitialiser l'état de la tâche
