@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
+import Creatable from "react-select/creatable";
 interface Task {
   name: string;
   priority: string;
@@ -44,7 +45,8 @@ const CreateTask = () => {
     updated_at: "",
     assignedUsers: "",
   });
-  const [categories, setCategories] = useState<Categorie[]>([])
+  const [categories, setCategories] = useState<Categorie[]>([]);
+  const [categorieOptions, setCategorieOptions] = useState<any>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string>("");
 
@@ -66,12 +68,19 @@ const CreateTask = () => {
     const fetchCategories = async () => {
       const catSnapshot = await getDocs(collection(db, "categories"));
       const catList = catSnapshot.docs.map((doc) => ({
+        id: doc.id,
         name: doc.data().name
       }));
       setCategories(catList);
+
+      const options = catList.map((cat) => ({
+        value: cat.id,
+        label: cat.name
+      }));
+      setCategorieOptions(options);
     };
     fetchCategories();
-  }, [])
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -136,12 +145,16 @@ const CreateTask = () => {
     value: user.uid,
     label: user.firstName,
   }));
-  
+
   const handleUserChange = (selectedOptions: any) => {
     const selectedUserIds = selectedOptions
       ? selectedOptions.map((option: any) => option.value).join(",")
       : "";
     setTask((prevTask) => ({ ...prevTask, assignedUsers: selectedUserIds }));
+  };
+
+  const handleCategoryChange = (selectedOption: any) => {
+    setTask((prevTask) => ({ ...prevTask, category: selectedOption.value }));
   };
 
   return (
@@ -160,14 +173,39 @@ const CreateTask = () => {
               />
             </Field>
             <Field label="Catégorie">
-              <NativeSelectRoot>
-                <NativeSelectField
-                  name="category"
-                  items={categories.map((cat) => (cat.name))}
-                  value={task.category}
-                  onChange={handleChange}
-                />
-              </NativeSelectRoot>
+              <Creatable
+                options={categorieOptions}
+                onChange={handleCategoryChange}
+                placeholder="Sélectionnez ou ajoutez une catégorie..."
+                formatCreateLabel={(inputValue) => `Créer la catégorie : "${inputValue}"`}
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: 'transparent',
+                    color: 'black',
+                    borderColor: 'gray',
+                    width: '760px'
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: 'white',
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: 'white',
+                    color: 'black',
+                  }),
+                  option: (base, { isFocused, isSelected }) => ({
+                    ...base,
+                    backgroundColor: isSelected ? '#ccc' : isFocused ? '#eee' : 'white',
+                    color: 'black',
+                  }),
+                  placeholder: (base) => ({
+                    ...base,
+                    color: 'gray',
+                  }),
+                }}
+              />
             </Field>
             <Field>
               <Field label="Priorité">
@@ -203,6 +241,33 @@ const CreateTask = () => {
                 isMulti
                 onChange={handleUserChange}
                 placeholder="Sélectionnez des utilisateurs..."
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: 'transparent',
+                    color: 'black',
+                    borderColor: 'gray',
+                    width: '760px'
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: 'black',
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: 'white',
+                    color: 'black',
+                  }),
+                  option: (base, { isFocused, isSelected }) => ({
+                    ...base,
+                    backgroundColor: isSelected ? '#ccc' : isFocused ? '#eee' : 'white',
+                    color: 'black',
+                  }),
+                  placeholder: (base) => ({
+                    ...base,
+                    color: 'gray',
+                  }),
+                }}
               />
             </Field>
           </Fieldset.Content>

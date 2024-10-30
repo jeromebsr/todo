@@ -1,11 +1,20 @@
-'use client'
+"use client";
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { db } from "@/firebase";
-import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { Fieldset, Heading, Input, Textarea } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
-import { NativeSelectField, NativeSelectRoot } from "@/components/ui/native-select";
+import {
+  NativeSelectField,
+  NativeSelectRoot,
+} from "@/components/ui/native-select";
 import { Box } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import Select from "react-select";
@@ -81,7 +90,11 @@ const EditTask = () => {
   }, [id, userOptions]);
 
   // Gérer les changements de champs
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setTask((prevTask) => (prevTask ? { ...prevTask, [name]: value } : null));
     setError("");
@@ -90,15 +103,26 @@ const EditTask = () => {
   // Gérer la mise à jour des utilisateurs assignés
   const handleUserChange = (selectedOptions: any) => {
     setSelectedUsers(selectedOptions); // pour re-render le prénom
-    const selectedUserIds = selectedOptions.map((option: any) => option.value).join(","); // ajoute les ids dans un array 
-    setTask((prevTask) => (prevTask ? { ...prevTask, assignedUsers: selectedUserIds } : null)); // met à jour la tâche avec les nvx uids (personnes tag)
+    const selectedUserIds = selectedOptions
+      .map((option: any) => option.value)
+      .join(","); // ajoute les ids dans un array
+    setTask((prevTask) =>
+      prevTask ? { ...prevTask, assignedUsers: selectedUserIds } : null
+    ); // met à jour la tâche avec les nvx uids (personnes tag)
   };
 
   // Gérer la soumission du formulaire
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!task?.name || !task.status || !task.priority || !task.deadline || !task.description || !task.category) {
+    if (
+      !task?.name ||
+      !task.status ||
+      !task.priority ||
+      !task.deadline ||
+      !task.description ||
+      !task.category
+    ) {
       setError("Tous les champs doivent être remplis !");
       return;
     }
@@ -126,27 +150,58 @@ const EditTask = () => {
         <Fieldset.Root size="lg" invalid>
           <Fieldset.Content>
             <Field label="Nom">
-              <Input type="text" name="name" value={task.name} onChange={handleChange} placeholder="Nom de la tâche" />
+              <Input
+                type="text"
+                name="name"
+                value={task.name}
+                onChange={handleChange}
+                placeholder="Nom de la tâche"
+              />
             </Field>
             <Field label="Catégorie">
               <NativeSelectRoot>
-                <NativeSelectField name="category" items={["Travail", "Course", "Ménage"]} value={task.category} onChange={handleChange} />
+                <NativeSelectField
+                  name="category"
+                  items={["Travail", "Course", "Ménage"]}
+                  value={task.category}
+                  onChange={handleChange}
+                />
               </NativeSelectRoot>
             </Field>
             <Field label="Priorité">
               <NativeSelectRoot>
-                <NativeSelectField name="priority" items={["Faible", "Moyenne", "Haute"]} value={task.priority} onChange={handleChange} />
+                <NativeSelectField
+                  name="priority"
+                  items={["Faible", "Moyenne", "Haute"]}
+                  value={task.priority}
+                  onChange={handleChange}
+                />
               </NativeSelectRoot>
             </Field>
             <Field label="Description">
-              <Textarea name="description" placeholder="Décrire la tâche en détails" value={task.description} onChange={handleChange} />
+              <Textarea
+                name="description"
+                placeholder="Décrire la tâche en détails"
+                value={task.description}
+                onChange={handleChange}
+              />
             </Field>
             <Field label="Deadline">
-              <Input type="date" name="deadline" value={task.deadline} onChange={handleChange} />
+              <Input
+                type="date"
+                name="deadline"
+                value={task.deadline}
+                onChange={handleChange}
+              />
             </Field>
             <Field label="Status">
               <NativeSelectRoot>
-                <NativeSelectField name="status" items={["En attente", "En cours", "Terminée"]} value={task.status} onChange={handleChange} />
+                <NativeSelectField
+                  name="status"
+                  items={["En attente", "En cours", "Terminée"]}
+                  value={task.status}
+                  onChange={handleChange}
+                />
               </NativeSelectRoot>
             </Field>
             <Field label="Attribuer à">
@@ -165,7 +220,12 @@ const EditTask = () => {
           Mettre à Jour Tâche
         </Button>
       </form>
-      <Button type="submit" colorPalette="red" mt={3} onClick={() => router.push("/")}>
+      <Button
+        type="submit"
+        colorPalette="red"
+        mt={3}
+        onClick={() => router.push("/")}
+      >
         Annuler
       </Button>
     </Box>
