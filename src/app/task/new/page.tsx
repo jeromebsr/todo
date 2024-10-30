@@ -123,11 +123,13 @@ const CreateTask = () => {
       });
 
       sendEmail(
+        user.email,
         user?.displayName,
         task.name,
         task.description,
         task.assignedUsers.split(",")
       );
+      console.log(user)
       console.log("Tache ajoutée!");
 
       // Réinitialiser l'état de la tâche

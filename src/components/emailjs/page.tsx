@@ -1,7 +1,8 @@
 import emailjs from "emailjs-com";
 
-export const sendEmail = (toName: string | null | undefined, taskName: string, taskDesc: string, taskAssignedUsers: string[]) => {
+export const sendEmail = (toEmail: string|null, toName: string | null | undefined, taskName: string, taskDesc: string, taskAssignedUsers: string[]) => {
   const templateParams = {
+    to_email: toEmail,
     to_name: toName,
     task_name: taskName,
     task_description: taskDesc,
